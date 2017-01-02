@@ -5,11 +5,15 @@
 #include <sys/time.h>       /* for setitimer */
 #include <unistd.h>     /* for pause */
 #include <signal.h>     /* for signal */
+#include <stdio.h>
+#include <stdlib.h>
+#include "deadman_client.h"
 
 #define INTERVAL 180        /* number of milliseconds to go off */
 
 /* function prototype */
 void DoStuff(void);
+int callClient();
 
 int main(int argc, char *argv[]) {
 
@@ -35,12 +39,39 @@ int main(int argc, char *argv[]) {
 
 }
 
+int doStuff = 1;
 /*
  * DoStuff
  */
 void DoStuff(void) {
+	if (doStuff) {
+		doStuff = 0;
+		// make connection to deadman switch
+		// make connection add state
 
-  printf("Timer went off.\n");
+		int deadmanSwitchReply = callClient();
+		if (deadmanSwitchReply == 0) {
+			// kill the dragon controller
+			printf("Kill dragon controller.\n");
+		} else if (deadmanSwitchReply == 1) {
+			//do nothing
+			printf("Do nothing\n");
+			doStuff = 1;
+		} else {
+			//there is a bug in callClient
+			//kill the dragon controller
+			printf("Kill dragon controller.\n");
+		}
+	} else {
+		// kill dragon controller
+			printf("Kill dragon controller.\n");
+	}
+}
 
+/*
+ * Fake implementation of call client
+ */
+int callClient() {
+	return 1;
 }
 
