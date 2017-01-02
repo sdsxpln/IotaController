@@ -55,13 +55,13 @@ int callClient()
                  error("ERROR writing to socket");
             }
 
-            /*bzero(buffer);*/
+            bzero(buffer, 6);
             n = read(sockfd,buffer,3);
             if (n < 0) { 
                  error("ERROR reading from socket");
             }
 
-            if (strcmp(buffer, "1")) {
+            if (strncmp(buffer, "1", 1)) {
                 deadmanSwitchIsAlive = 1;
             }
 
