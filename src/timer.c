@@ -9,11 +9,10 @@
 #include <stdlib.h>
 #include "deadman_client.h"
 
-#define INTERVAL 180        /* number of milliseconds to go off */
+#define INTERVAL 5000       /* number of milliseconds to go off */
 
 /* function prototype */
 void DoStuff(void);
-int callClient();
 
 int main(int argc, char *argv[]) {
 
@@ -46,32 +45,29 @@ int doStuff = 1;
 void DoStuff(void) {
 	if (doStuff) {
 		doStuff = 0;
-		// make connection to deadman switch
-		// make connection add state
-
-		int deadmanSwitchReply = callClient();
-		if (deadmanSwitchReply == 0) {
-			// kill the dragon controller
-			printf("Kill dragon controller.\n");
-		} else if (deadmanSwitchReply == 1) {
-			//do nothing
-			printf("Do nothing\n");
-			doStuff = 1;
-		} else {
-			//there is a bug in callClient
-			//kill the dragon controller
-			printf("Kill dragon controller.\n");
-		}
+        printf("Do stuff\n");
+		/*// make connection to deadman switch*/
+		/*// make connection add state*/
+        printf("Checking deadman switch\n");
+        int deadmanSwitchReply = callClient();
+        if (deadmanSwitchReply == 0) {
+            // kill the dragon controller
+            printf("Kill dragon controller.\n");
+        } else if (deadmanSwitchReply == 1) {
+            //do nothing
+            printf("Do nothing\n");
+            doStuff = 1;
+            deadmanSwitchReply = 0;
+        } else {
+            //there is a bug in callClient
+            //kill the dragon controller
+            printf("Kill dragon controller.\n");
+        }
 	} else {
 		// kill dragon controller
-			printf("Kill dragon controller.\n");
+	    printf("Kill dragon controller.\n");
+        /*doStuff = 1;*/
 	}
 }
 
-/*
- * Fake implementation of call client
- */
-int callClient() {
-	return 1;
-}
 
