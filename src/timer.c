@@ -9,12 +9,21 @@
 #include <stdlib.h>
 #include "deadman_client.h"
 
-#define INTERVAL 5000       /* number of milliseconds to go off */
+#define INTERVAL 180       /* number of milliseconds to go off */
 
 /* function prototype */
 void DoStuff(void);
+volatile int deadmanSwitchReply = 0;
 
 int main(int argc, char *argv[]) {
+
+  if (argc < 3) {
+          perror("Usage: timer 192.168.13.104 9090");
+          exit(1);
+  }
+
+  char* hostname = argv[1];
+  int portno = atoi(argv[2]);
 
   struct itimerval it_val;  /* for setting itimer */
 
@@ -33,41 +42,31 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  while (1) 
-    pause();
+  while (1) {
+    deadmanSwitchReply += callClient(hostname, portno);
+  }
 
 }
 
-int doStuff = 1;
 /*
  * DoStuff
  */
 void DoStuff(void) {
-	if (doStuff) {
-		doStuff = 0;
-        printf("Do stuff\n");
-		/*// make connection to deadman switch*/
-		/*// make connection add state*/
-        printf("Checking deadman switch\n");
-        int deadmanSwitchReply = callClient();
-        if (deadmanSwitchReply == 0) {
-            // kill the dragon controller
-            printf("Kill dragon controller.\n");
-        } else if (deadmanSwitchReply == 1) {
-            //do nothing
-            printf("Do nothing\n");
-            doStuff = 1;
-            deadmanSwitchReply = 0;
-        } else {
-            //there is a bug in callClient
-            //kill the dragon controller
-            printf("Kill dragon controller.\n");
-        }
-	} else {
-		// kill dragon controller
-	    printf("Kill dragon controller.\n");
-        /*doStuff = 1;*/
-	}
+    /*// make connection to deadman switch*/
+    /*// make connection add state*/
+    if (deadmanSwitchReply == 0) {
+        // kill the dragon controller
+        printf("Kill dragon controller.\n");
+    } else if (deadmanSwitchReply >= 1) {
+        //do nothing
+        printf("Do nothing\n");
+        deadmanSwitchReply = 0;
+    } else {
+        //there is a bug in callClient
+        //kill the dragon controller
+        printf("Kill dragon controller.\n");
+    }
 }
+
 
 

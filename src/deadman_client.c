@@ -21,18 +21,29 @@ void error(const char *msg)
 /*
  * return 0 problem, 1 ok
  */
-int callClient()
+int callClient(char* hostname, int portno)
 {
+    if (hostname == NULL) {
+            hostname = "localhost";
+    }
+
+    if (portno == 0) {
+            portno = 9090;
+    }
+
+
     int deadmanSwitchIsAlive = 0;
-    int sockfd, portno = 9090, n;
-    char* hostname = "localhost";
+    int sockfd, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-    char* buffer = "alive\n";
+    char buffer[10];
+    char* queryMessage = "alive";
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) { 
         error("ERROR opening socket");
+        return deadmanSwitchIsAlive;
     }
 
     server = gethostbyname(hostname);
@@ -50,24 +61,24 @@ int callClient()
         error("ERROR connecting");
     } else {
 
-            n = write(sockfd,buffer,strlen(buffer));
+            n = write(sockfd,queryMessage,strlen(queryMessage));
             if (n < 0) { 
                  error("ERROR writing to socket");
             }
 
-            bzero(buffer, 6);
-            n = read(sockfd,buffer,3);
+            n = read(sockfd,buffer,9);
             if (n < 0) { 
                  error("ERROR reading from socket");
             }
 
-            if (strncmp(buffer, "1", 1)) {
+            if (strncmp(buffer, "1", 1) == 0) {
                 deadmanSwitchIsAlive = 1;
             }
 
-            printf("%s\n",buffer);
-            close(sockfd);
+            /*printf("%s\n",buffer);*/
     }
 
+    close(sockfd);
     return deadmanSwitchIsAlive;
 }
+
