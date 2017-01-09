@@ -4,7 +4,7 @@ LDFLAGS=
 SOURCES=$(wildcard src/**/*.c src/*.c)
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
-TARGET=bin/timer
+TARGET=bin/iotacontroller
 
 all: $(TARGET)
 

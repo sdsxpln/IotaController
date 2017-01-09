@@ -25,7 +25,7 @@ int callClient()
 {
     int deadmanSwitchIsAlive = 0;
     int sockfd, portno = 9090, n;
-    char* hostname = "localhost";
+    char* hostname = "charmer";
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
@@ -33,6 +33,7 @@ int callClient()
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) { 
         error("ERROR opening socket");
+        return deadmanSwitchIsAlive;
     }
 
     server = gethostbyname(hostname);
@@ -55,19 +56,18 @@ int callClient()
                  error("ERROR writing to socket");
             }
 
-            bzero(buffer, 6);
-            n = read(sockfd,buffer,3);
+            n = read(sockfd,buffer,255);
             if (n < 0) { 
                  error("ERROR reading from socket");
             }
 
-            if (strncmp(buffer, "1", 1)) {
+            if (strncmp(buffer, "1", 1) == 0) {
                 deadmanSwitchIsAlive = 1;
             }
 
             printf("%s\n",buffer);
-            close(sockfd);
     }
 
+    close(sockfd);
     return deadmanSwitchIsAlive;
 }
