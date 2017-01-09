@@ -66,7 +66,7 @@ int callClient(char* hostname, int portno)
                  error("ERROR writing to socket");
             }
 
-            n = read(sockfd,buffer,9);
+            n = read(sockfd,buffer,255);
             if (n < 0) { 
                  error("ERROR reading from socket");
             }
@@ -75,7 +75,7 @@ int callClient(char* hostname, int portno)
                 deadmanSwitchIsAlive = 1;
             }
 
-            /*printf("%s\n",buffer);*/
+            printf("%s\n",buffer);
     }
 
     close(sockfd);

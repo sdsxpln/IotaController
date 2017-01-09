@@ -11,6 +11,6 @@
 /**
  * Checks if the deadman-switch is active
  */
-int callClient();
+int callClient(char* hostname, int portno)
 
 #endif /* SRC_DEADMAN_CLIENT_H_ */
